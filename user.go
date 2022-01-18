@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"regexp"
 )
 
 // UserRecord encapsulates user data returned from ipa user commands
@@ -20,6 +21,7 @@ type UserRecord struct {
 	First            IpaString   `json:"givenname"`
 	Last             IpaString   `json:"sn"`
 	DisplayName      IpaString   `json:"displayname"`
+	Title		 IpaString   `json:"title"`
 	Principal        IpaString   `json:"krbprincipalname"`
 	Uid              IpaString   `json:"uid"`
 	UidNumber        IpaString   `json:"uidnumber"`
@@ -272,11 +274,13 @@ func (c *Client) UserEnable(uid string) error {
 
 // Add new user. If random is true a random password will be created for the
 // user. Note this requires "User Administrators" Privilege in FreeIPA.
-func (c *Client) UserAdd(uid, email, first, last, homedir, shell string, random bool) (*UserRecord, error) {
+func (c *Client) UserAdd(uid, gid, email, first, last, title, homedir, shell string, random bool) (*UserRecord, error) {
 	var options = map[string]interface{}{
 		"mail":      email,
 		"givenname": first,
-		"sn":        last}
+		"sn":        last,
+		"gidnumber": gid,
+		"title":     title}
 
 	if len(homedir) > 0 {
 		options["homedirectory"] = homedir
@@ -302,4 +306,20 @@ func (c *Client) UserAdd(uid, email, first, last, homedir, shell string, random 
 	}
 
 	return &userRec, nil
+}
+
+func (c *Client) CheckUserExist(uid string) (bool, error) {
+	_, err := c.UserShow(uid)
+	
+	if err != nil {
+		re := regexp.MustCompile(`user not found`)
+		isUserNotFoundError := re.Match([]byte(err.Error()))
+		if isUserNotFoundError {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
