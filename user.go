@@ -24,6 +24,7 @@ import (
 type User struct {
 	UUID             string              `json:"ipauniqueid"`
 	DN               string              `json:"dn"`
+	Title            string              `json:"title"`
 	First            string              `json:"givenname"`
 	Last             string              `json:"sn"`
 	DisplayName      string              `json:"displayname"`
