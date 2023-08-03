@@ -99,6 +99,7 @@ func (u *User) ToOptions() Options {
 		"mail":            u.Email,
 		"givenname":       u.First,
 		"sn":              u.Last,
+		"title":              u.Title,
 		"homedirectory":   u.HomeDir,
 		"loginshell":      u.Shell,
 		"displayname":     u.DisplayName,
