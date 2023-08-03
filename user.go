@@ -120,6 +120,7 @@ func (u *User) fromJSON(raw []byte) error {
 
 	u.UUID = res.Get("ipauniqueid.0").String()
 	u.DN = res.Get("dn").String()
+	u.Title = res.Get("title.0").String()
 	u.First = res.Get("givenname.0").String()
 	u.Last = res.Get("sn.0").String()
 	u.DisplayName = res.Get("displayname.0").String()
